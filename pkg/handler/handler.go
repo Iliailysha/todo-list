@@ -1,26 +1,28 @@
 package handler
 
 import (
+	"todo-list/pkg/interfaces"
+
 	"github.com/gin-gonic/gin"
-	"todo-list/pkg/service"
 )
 
 type Handler struct {
-	services *service.Service
+	authService     interfaces.AuthService
+	todolistService interfaces.TodoList
 }
 
-func NewHandler(services *service.Service) *Handler {
-	return &Handler{services: services}
+func NewHandler(authService interfaces.AuthService, todolistService interfaces.TodoList) *Handler {
+	return &Handler{authService: authService, todolistService: todolistService}
 }
 
-func (h Handler) InitRoutes() *gin.Engine {
+func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 	auth := router.Group("/auth")
 	{
 		auth.POST("/sign-up", h.signUp)
 		auth.POST("/sign-in", h.signIn)
 	}
-	api := router.Group("/api")
+	api := router.Group("/api", h.userIdentity)
 	{
 		lists := api.Group("/lists")
 		{

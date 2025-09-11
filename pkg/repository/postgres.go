@@ -1,3 +1,5 @@
+//подключение к БД
+
 package repository
 
 import (
@@ -7,9 +9,9 @@ import (
 )
 
 const (
-	userTable       = "users"
-	todoListTable   = "todo_lists"
-	usersListsTable = "users_lists"
+	UsersTable      = "users"
+	TodoListTable   = "todo_lists"
+	UsersListsTable = "users_lists"
 	todoItemsTable  = "todo_items"
 	listsItemsTable = "lists_items"
 )

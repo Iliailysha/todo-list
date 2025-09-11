@@ -2,10 +2,10 @@ package main
 
 import (
 	"os"
-	todo "todo-list"
 	"todo-list/pkg/handler"
 	"todo-list/pkg/repository"
-	"todo-list/pkg/service"
+	"todo-list/pkg/repository/users"
+	"todo-list/pkg/services"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -33,13 +33,13 @@ func main() {
 	if err != nil {
 		logrus.Fatalf("failed initializing db: %s", err.Error())
 	}
-	repos := repository.NewRepository(db)
-	services := service.NewService(repos)
-	handlers := handler.NewHandler(services)
+	repos := users.NewRepository(db)
+	services := services.NewService(repos)
+	handlers := handler.NewHandler(services.Authorization, services.TodoList)
+	routes := handlers.InitRoutes()
 
-	srv := new(todo.Server)
-	if err := srv.Run(viper.GetString("port"), handlers.InitRoutes()); err != nil {
-		logrus.Fatalf("error occured while running http server: %s", err.Error())
+	if err := routes.Run(":" + viper.GetString("port")); err != nil {
+		logrus.Fatalf("gin run error: %v", err)
 	}
 
 }
